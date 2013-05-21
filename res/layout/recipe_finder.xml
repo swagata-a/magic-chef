@@ -4,6 +4,16 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <TextView 
+       android:id="@+id/credits"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"               
+       android:text="@string/credit_text"
+       android:textSize="16sp"
+       android:clickable="true"
+       android:layout_marginBottom="10dp"
+       />
+    
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"

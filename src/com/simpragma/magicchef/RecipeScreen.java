@@ -50,7 +50,7 @@ public class RecipeScreen extends Activity {
 			}
 
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				progressDialog.setMessage("Loading Page");
+				progressDialog.setMessage(getString(R.string.loading_page));
 				progressDialog.setCancelable(false);
 				progressDialog.setOnKeyListener(new OnKeyListener() {
 					@Override
@@ -81,13 +81,19 @@ public class RecipeScreen extends Activity {
 			return;
 		}
 		// Get data via the key
-		String value1 = extras.getString("url");
-		if (value1 != null) {
-			webView.loadUrl(value1);
+		String url = extras.getString("url");
+		if (url != null) {
+			webView.loadUrl(url);
 		}
 
 	}
 
+	/**
+	 * This is a pretty useful method. If one Webview contains links, and we
+	 * keep visiting the links, then pressing hardware back button will go to
+	 * previously visited link. Normal behavior is, it goes to the previous
+	 * activity where this Webview was accessed from.
+	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// Check if the key event was the Back button and if there's history
@@ -113,7 +119,6 @@ public class RecipeScreen extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.d("adv", item.getItemId() + " and " + R.id.advancedSearch);
 		switch (item.getItemId()) {
 		case R.id.advancedSearch:
 			Intent intent = new Intent(this, AdvanceSettings.class);

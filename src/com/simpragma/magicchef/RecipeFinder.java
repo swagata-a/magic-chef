@@ -19,6 +19,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,10 +27,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.simpragma.magicchef.adapter.RecipeAdapter;
 import com.simpragma.magicchef.json.JsonParser;
@@ -43,38 +46,33 @@ public class RecipeFinder extends Activity {
 	public static final String TAG_HREF = "href";
 	public static final String TAG_INGREDIENTS = "ingredients";
 	public static final String TAG_THUMBNAIL = "thumbnail";
+	public static final String CREDITS_URL = "http://www.recipepuppy.com/about/api/";
 	JSONArray results = null;
 	ArrayList<HashMap<String, String>> contactList = new ArrayList<HashMap<String, String>>();
 	RecipeAdapter adapter = null;
 	ListView list;
 	ProgressDialog dialog;
 
+	TextView credits;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recipe_finder);
 		if (isNetworkConnected()) {
-			Log.d("connection", "Internet Available");
-			Log.d("connection", "Outside");
 			Bundle extras = getIntent().getExtras();
 			if (extras != null) {
 				url = "http://www.recipepuppy.com/api/";
 				String query = (String) extras.getString("query");
 				String cuisine = (String) extras.getString("cuisine");
-				// String exclude = (String) extras.getString("exclude");
-
 				String finalQuery = "";
 				String finalCuisine = "";
-				// String finalExclude = "";
 				if (query != null) {
 					String[] queryTokens = query.split(",");
-					Log.d("query", "ActualQuery" + query);
 					List<String> spaceTokens = new ArrayList<String>();
 					for (String str : queryTokens) {
-						Log.d("query", "tokens" + str);
 						String[] spcToken = str.split(" ");
 						for (String str1 : spcToken) {
-							Log.d("query", "Adding " + str1);
 							spaceTokens.add(str1);
 						}
 					}
@@ -85,13 +83,10 @@ public class RecipeFinder extends Activity {
 				}
 				if (cuisine != null) {
 					String[] cuisineTokens = cuisine.split(",");
-					Log.d("query", "ActualQuery" + cuisine);
 					List<String> spaceTokens = new ArrayList<String>();
 					for (String str : cuisineTokens) {
-						Log.d("query", "tokens" + str);
 						String[] spcToken = str.split(" ");
 						for (String str1 : spcToken) {
-							Log.d("query", "Adding " + str1);
 							spaceTokens.add(str1);
 						}
 					}
@@ -141,24 +136,21 @@ public class RecipeFinder extends Activity {
 				}
 			}
 			Log.d("url", url);
-			dialog = ProgressDialog.show(RecipeFinder.this, "Please wait",
-					"Serching Recipes", true);
+			dialog = ProgressDialog.show(RecipeFinder.this, getString(R.string.please_wait),
+					getString(R.string.searching_recipes), true);
 			dialog.setCancelable(true);
 			new RecipeFetcher().execute(url);
 		} else {
-			Log.d("connection", "No Internet Available");
-			AlertDialog.Builder builder = new AlertDialog.Builder(
-					this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setPositiveButton("OK",
 					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int which) {
+						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
 							finish();
 						}
 					});
-			builder.setTitle("Internet Needed");
-			builder.setMessage("This application needs internet. Please enable your connection");
+			builder.setTitle(getString(R.string.internet_needed));
+			builder.setMessage(getString(R.string.no_internet_message));
 			builder.setCancelable(false);
 			AlertDialog dlg = builder.create();
 			dlg.show();
@@ -172,14 +164,10 @@ public class RecipeFinder extends Activity {
 		protected ArrayList<HashMap<String, String>> doInBackground(
 				String... params) {
 			JsonParser parser = new JsonParser();
-			Log.d("url", params[0]);
 			JSONObject json = parser.getJSONFromUrl(params[0]);
 			JSONArray contacts = null;
 			try {
-				// Getting Array of Recipes
 				contacts = json.getJSONArray(TAG_RESULTS);
-
-				// looping through All Recipes
 				for (int i = 0; i < contacts.length(); i++) {
 					JSONObject c = contacts.getJSONObject(i);
 
@@ -201,9 +189,9 @@ public class RecipeFinder extends Activity {
 		@Override
 		protected void onPostExecute(
 				final ArrayList<HashMap<String, String>> result) {
-			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			list = (ListView) findViewById(R.id.list);
+			credits = (TextView) findViewById(R.id.credits);
 			adapter = new RecipeAdapter(getApplicationContext(), result);
 			list.setAdapter(adapter);
 			dialog.dismiss();
@@ -217,6 +205,15 @@ public class RecipeFinder extends Activity {
 							RecipeScreen.class);
 					intent.putExtra("url", recipe.get(TAG_HREF));
 					startActivity(intent);
+				}
+			});
+
+			credits.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri
+							.parse(CREDITS_URL));
+					startActivity(browserIntent);
 				}
 			});
 		}
@@ -237,7 +234,6 @@ public class RecipeFinder extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.d("adv", item.getItemId() + " and " + R.id.advancedSearch);
 		switch (item.getItemId()) {
 		case R.id.advancedSearch:
 			Intent intent = new Intent(this, AdvanceSettings.class);
@@ -249,13 +245,9 @@ public class RecipeFinder extends Activity {
 	}
 
 	private boolean isNetworkConnected() {
-		Log.d("connection", "came in");
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager
 				.getActiveNetworkInfo();
-		Log.d("connection",
-				(activeNetworkInfo != null && activeNetworkInfo.isConnected())
-						+ "");
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 }
