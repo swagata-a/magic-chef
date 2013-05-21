@@ -4,6 +4,8 @@
 package com.simpragma.magicchef.bo;
 
 /**
+ * Not used right now. I am keeping this. Have plans to use it in future
+ * 
  * @author swagataacharyya
  * 
  */

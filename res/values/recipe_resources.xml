@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="credit_text">Powered by: Recipe Puppy</string>
+    <string name="please_wait">Please wait</string>
+    <string name="searching_recipes">Searching Recipes</string>
+    <string name="internet_needed">Not connected to Internet</string>
+    <string name="no_internet_message">This application needs internet. Please enable your connection</string>
+    <string name="loading_page">Loading Page</string>
+    
+</resources>

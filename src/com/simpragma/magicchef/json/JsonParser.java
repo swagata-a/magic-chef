@@ -19,6 +19,13 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+/**
+ * A JSON parsing utility. Can be used in any app where we need to
+ * parse a JSON document.
+ * 
+ * @author swagataacharyya
+ * 
+ */
 public class JsonParser {
 
 	static InputStream is = null;
@@ -31,6 +38,7 @@ public class JsonParser {
 	}
 
 	public JSONObject getJSONFromUrl(String url) {
+		//TODO Handle the Exception
 		try {
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost(url);

@@ -47,7 +47,6 @@ public class RecipeAdapter extends BaseAdapter {
 		Log.d("ConvertView", convertView+"");
 		if (convertView == null)
 			vi = inflater.inflate(R.layout.recipe_row, null);
-		Log.d("App", "View for "+position);
 		TextView title = (TextView) vi.findViewById(R.id.title);
 		TextView ingredients = (TextView) vi.findViewById(R.id.ingredients);
 		ImageView thumbnail = (ImageView) vi.findViewById(R.id.list_image);
@@ -57,6 +56,8 @@ public class RecipeAdapter extends BaseAdapter {
 
 		title.setText(recipe.get(RecipeFinder.TAG_TITLE).trim());
 		ingredients.setText(recipe.get(RecipeFinder.TAG_INGREDIENTS).trim());
+		// Interesting part. I didn't know we needed to download the image from
+		// web first before showing in an ImageView
 		if(recipe.get(RecipeFinder.TAG_THUMBNAIL).length()>0){
 			URL newurl;
 			try {
@@ -66,7 +67,7 @@ public class RecipeAdapter extends BaseAdapter {
 				Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream()); 
 				thumbnail.setImageBitmap(bm);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				// How do I handle this exception?
 				e.printStackTrace();
 			} 
 		}
