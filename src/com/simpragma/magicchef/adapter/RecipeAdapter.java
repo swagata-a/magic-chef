@@ -16,15 +16,17 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.simpragma.magicchef.RecipeFinder;
 import com.simpragma.magicchef.R;
+import com.simpragma.magicchef.RecipeFinder;
+import com.simpragma.magicchef.bo.Recipe;
 
 public class RecipeAdapter extends BaseAdapter {
 
-	private ArrayList<HashMap<String, String>> data;
+//	private ArrayList<HashMap<String, String>> data;
+	private ArrayList<Recipe> data;
 	private static LayoutInflater inflater = null;
 
-	public RecipeAdapter(Context a, ArrayList<HashMap<String, String>> d) {
+	public RecipeAdapter(Context a, ArrayList<Recipe> d) {
 		data = d;
 		inflater = (LayoutInflater) a
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -50,24 +52,19 @@ public class RecipeAdapter extends BaseAdapter {
 		TextView title = (TextView) vi.findViewById(R.id.title);
 		TextView ingredients = (TextView) vi.findViewById(R.id.ingredients);
 		ImageView thumbnail = (ImageView) vi.findViewById(R.id.list_image);
+		Recipe recipe = data.get(position);
 
-		HashMap<String, String> recipe = new HashMap<String, String>();
-		recipe = data.get(position);
-
-		title.setText(recipe.get(RecipeFinder.TAG_TITLE).trim());
-		ingredients.setText(recipe.get(RecipeFinder.TAG_INGREDIENTS).trim());
-		// Interesting part. I didn't know we needed to download the image from
-		// web first before showing in an ImageView
-		if(recipe.get(RecipeFinder.TAG_THUMBNAIL).length()>0){
+		title.setText(recipe.getTitle().trim());
+		ingredients.setText(recipe.getIngredients().trim());
+		if(recipe.getThumbnail().trim().length()>0){
 			URL newurl;
 			try {
 				StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 				StrictMode.setThreadPolicy(policy);
-				newurl = new URL(recipe.get(RecipeFinder.TAG_THUMBNAIL));
+				newurl = new URL(recipe.getThumbnail());
 				Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream()); 
 				thumbnail.setImageBitmap(bm);
 			} catch (Exception e) {
-				// How do I handle this exception?
 				e.printStackTrace();
 			} 
 		}
