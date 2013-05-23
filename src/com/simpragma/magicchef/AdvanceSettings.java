@@ -84,14 +84,20 @@ public class AdvanceSettings extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+
 		switch (item.getItemId()) {
 		case R.id.advancedSearch:
 			Intent intent = new Intent(this, AdvanceSettings.class);
 			startActivity(intent);
 			return true;
+		case R.id.favorites:
+			Intent favIntent = new Intent(this, FavoriteRecipes.class);
+			startActivity(favIntent);
+			return true;
 		default:
 			return super.onContextItemSelected(item);
 		}
+	
 	}
 
 	/**

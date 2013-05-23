@@ -1,32 +1,47 @@
 package com.simpragma.magicchef;
 
-import com.simpragma.magicchef.R;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.Toast;
+
+import com.simpragma.magicchef.bo.Recipe;
+import com.simpragma.magicchef.db.RecipeDao;
 
 public class RecipeScreen extends Activity {
 
 	private WebView webView;
+	private Button addFavButton;
+	private RecipeDao recipeDao;
+	String id;
+	String url = "";
+	String title = "";
+	String thumbNail = "";
+	String ingredients = "";
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recipe_screen);
+
+		addFavButton = (Button) findViewById(R.id.addFavButton);
+
 		WebViewClient myWebClient = new WebViewClient() {
 			ProgressDialog progressDialog = new ProgressDialog(
 					RecipeScreen.this);
@@ -62,7 +77,6 @@ public class RecipeScreen extends Activity {
 							return false;
 					}
 				});
-				progressDialog.show();
 				view.loadUrl(url);
 				return true;
 			}
@@ -81,11 +95,42 @@ public class RecipeScreen extends Activity {
 			return;
 		}
 		// Get data via the key
-		String url = extras.getString("url");
+		url = extras.getString("url");
+		title = extras.getString("title");
+		thumbNail = extras.getString("thumbNail");
+		ingredients = extras.getString("ingredients");
+		id = extras.getString("id");
+		if(id != null){
+			addFavButton.setText("Remove Fav");
+			addFavButton.refreshDrawableState();
+		}
 		if (url != null) {
 			webView.loadUrl(url);
 		}
+		addFavButton.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View view) {
+				if(id==null){
+				Recipe recipe = new Recipe(title, url, ingredients, thumbNail);
+				if (recipeDao.getRecipeByUrl(url) == null) {
+					recipeDao.createRecipe(recipe);
+					Toast.makeText(getApplicationContext(), "Created",
+							Toast.LENGTH_LONG).show();
+				}
+				}else{
+					recipeDao.deleteRecipe(url);
+					Toast.makeText(getApplicationContext(), "Deleted",
+							Toast.LENGTH_LONG).show();
+					id=null;
+					addFavButton.setText("Add Fav");
+					addFavButton.refreshDrawableState();
+				}
+			}
+				
+		});
+		recipeDao = new RecipeDao(this);
+		recipeDao.open();
 	}
 
 	/**
@@ -119,13 +164,31 @@ public class RecipeScreen extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+
 		switch (item.getItemId()) {
 		case R.id.advancedSearch:
 			Intent intent = new Intent(this, AdvanceSettings.class);
 			startActivity(intent);
 			return true;
+		case R.id.favorites:
+			Intent favIntent = new Intent(this, FavoriteRecipes.class);
+			startActivity(favIntent);
+			return true;
 		default:
 			return super.onContextItemSelected(item);
 		}
+
+	}
+
+	@Override
+	protected void onResume() {
+		recipeDao.open();
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		recipeDao.close();
+		super.onPause();
 	}
 }

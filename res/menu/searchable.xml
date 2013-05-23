@@ -2,13 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/search"
         android:title="@string/search_title"
-          android:icon="@drawable/find2"
+          android:icon="@drawable/search"
           android:showAsAction="collapseActionView|ifRoom"
           android:actionViewClass="android.widget.SearchView" />
     
     <item android:id="@+id/advancedSearch"
         android:title="@string/adv_search_title"
           android:icon="@drawable/setting"
+          android:showAsAction="collapseActionView|ifRoom"
+          />
+    <item android:id="@+id/favorites"
+        android:title="@string/favorites"
+          android:icon="@drawable/fav_icon"
           android:showAsAction="collapseActionView|ifRoom"
           />
 </menu>

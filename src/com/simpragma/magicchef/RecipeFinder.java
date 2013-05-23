@@ -3,7 +3,6 @@ package com.simpragma.magicchef;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -35,12 +34,15 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.simpragma.magicchef.adapter.RecipeAdapter;
+import com.simpragma.magicchef.bo.Recipe;
 import com.simpragma.magicchef.json.JsonParser;
 
 public class RecipeFinder extends Activity {
 
 	private static String url = "http://www.recipepuppy.com/api/";
-	ArrayList<HashMap<String, String>> recipeList = new ArrayList<HashMap<String, String>>();
+	// ArrayList<HashMap<String, String>> recipeList = new
+	// ArrayList<HashMap<String, String>>();
+	ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
 	public static final String TAG_RESULTS = "results";
 	public static final String TAG_TITLE = "title";
 	public static final String TAG_HREF = "href";
@@ -48,7 +50,6 @@ public class RecipeFinder extends Activity {
 	public static final String TAG_THUMBNAIL = "thumbnail";
 	public static final String CREDITS_URL = "http://www.recipepuppy.com/about/api/";
 	JSONArray results = null;
-	ArrayList<HashMap<String, String>> contactList = new ArrayList<HashMap<String, String>>();
 	RecipeAdapter adapter = null;
 	ListView list;
 	ProgressDialog dialog;
@@ -136,7 +137,8 @@ public class RecipeFinder extends Activity {
 				}
 			}
 			Log.d("url", url);
-			dialog = ProgressDialog.show(RecipeFinder.this, getString(R.string.please_wait),
+			dialog = ProgressDialog.show(RecipeFinder.this,
+					getString(R.string.please_wait),
 					getString(R.string.searching_recipes), true);
 			dialog.setCancelable(true);
 			new RecipeFetcher().execute(url);
@@ -158,11 +160,10 @@ public class RecipeFinder extends Activity {
 	}
 
 	private class RecipeFetcher extends
-			AsyncTask<String, Integer, ArrayList<HashMap<String, String>>> {
+			AsyncTask<String, Integer, ArrayList<Recipe>> {
 
 		@Override
-		protected ArrayList<HashMap<String, String>> doInBackground(
-				String... params) {
+		protected ArrayList<Recipe> doInBackground(String... params) {
 			JsonParser parser = new JsonParser();
 			JSONObject json = parser.getJSONFromUrl(params[0]);
 			JSONArray contacts = null;
@@ -170,15 +171,11 @@ public class RecipeFinder extends Activity {
 				contacts = json.getJSONArray(TAG_RESULTS);
 				for (int i = 0; i < contacts.length(); i++) {
 					JSONObject c = contacts.getJSONObject(i);
-
-					HashMap<String, String> map = new HashMap<String, String>();
-					// adding each child node to HashMap key => value
-					map.put(TAG_TITLE, c.getString(TAG_TITLE));
-					map.put(TAG_HREF, c.getString(TAG_HREF));
-					map.put(TAG_INGREDIENTS, c.getString(TAG_INGREDIENTS));
-					map.put(TAG_THUMBNAIL, c.getString(TAG_THUMBNAIL));
-					map.put(TAG_HREF, c.getString(TAG_HREF));
-					recipeList.add(map);
+					Recipe recipe = new Recipe(c.getString(TAG_TITLE),
+							c.getString(TAG_HREF),
+							c.getString(TAG_INGREDIENTS),
+							c.getString(TAG_THUMBNAIL));
+					recipeList.add(recipe);
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -187,8 +184,7 @@ public class RecipeFinder extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(
-				final ArrayList<HashMap<String, String>> result) {
+		protected void onPostExecute(final ArrayList<Recipe> result) {
 			super.onPostExecute(result);
 			list = (ListView) findViewById(R.id.list);
 			credits = (TextView) findViewById(R.id.credits);
@@ -200,10 +196,13 @@ public class RecipeFinder extends Activity {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int position, long arg3) {
-					HashMap<String, String> recipe = result.get(position);
+					Recipe recipe = result.get(position);
 					Intent intent = new Intent(getApplicationContext(),
 							RecipeScreen.class);
-					intent.putExtra("url", recipe.get(TAG_HREF));
+					intent.putExtra("url", recipe.getHref());
+					intent.putExtra("title", recipe.getTitle());
+					intent.putExtra("thumbNail", recipe.getThumbnail());
+					intent.putExtra("ingredients", recipe.getIngredients());
 					startActivity(intent);
 				}
 			});
@@ -238,6 +237,10 @@ public class RecipeFinder extends Activity {
 		case R.id.advancedSearch:
 			Intent intent = new Intent(this, AdvanceSettings.class);
 			startActivity(intent);
+			return true;
+		case R.id.favorites:
+			Intent favIntent = new Intent(this, FavoriteRecipes.class);
+			startActivity(favIntent);
 			return true;
 		default:
 			return super.onContextItemSelected(item);
