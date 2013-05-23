@@ -1,6 +1,6 @@
 ## Welcome to the magic-chef!
 
-This idea came in my mind on a friday evening. For some reason I was left office late and when I came home it was quite late in all senses. I didn't find a restaurant open in my area, all shops were closed, and weekend was just some hours away.
+This idea came to my mind on a friday evening. For some reason I left office late and when I came home it was quite late in all senses. I didn't find a restaurant open in my area, all shops were closed, and weekend was just some hours away.
 
 Now this is a tricky situation. I stay alone, so getting food is a big headache. To be honest I am not a passionate cook, so cooking for myself just adds on the already existing headache. So on that night, I am left with no other option but cook a meal for myself, and I opened the fridge. It was as expected. If someone doesn't go to market for weeks, his fridge looks pretty clean! So was mine.
 
