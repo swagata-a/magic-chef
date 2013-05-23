@@ -12,11 +12,16 @@
     <string name="title_activity_advance_settings">Advanced Search</string>
     <string name="ingredients">Enter Ingredients</string>
     <string name="ing_examples"> (e.g. milk,honey,chicken etc.)</string>
-	<string name="cuisine">Enter Cuisine</string>
+    <string name="cuisine">Enter Cuisine</string>
     <string name="cuisine_examples"> (e.g. american,italian,indin etc.)</string>
     <string name="go_for_it">Go For It</string>
     <string name="ingredient_exclude">Anything to exclude</string>
     <string name="exclude_example">Anything you do not like</string>
     <string name="preference">Preference</string>
     <string name="preference_example">(e.g. Vegan,Vegeterian etc)</string>
+    <string name="favorites">Favorites</string>
+    <string name="title_activity_favorite_recipes">FavoriteRecipes</string>
+    <string name="menu_settings">Settings</string>
+	<string name="no_fav">You dont have any favorite recipes.</string>
+	<string name="add_fav">Add Fav</string>
 </resources>
