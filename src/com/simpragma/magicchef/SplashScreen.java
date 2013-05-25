@@ -33,7 +33,7 @@ public class SplashScreen extends Activity {
 				 newIntent = new Intent(SplashScreen.this, RecipeFinder.class);
 				}else{
 				 newIntent = new Intent(SplashScreen.this, FavoriteRecipes.class);	
-				 newIntent.putExtra("data", recipeList);
+//				 newIntent.putExtra("data", recipeList);
 				}
 				startActivity(newIntent);
 				finish();

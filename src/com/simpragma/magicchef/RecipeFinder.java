@@ -62,6 +62,7 @@ public class RecipeFinder extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recipe_finder);
 		if (RecipeUtil.isNetworkConnected(getApplicationContext())) {
+			Log.d("App", "Network Connected");
 			Bundle extras = getIntent().getExtras();
 			if (extras != null) {
 				url = "http://www.recipepuppy.com/api/";
@@ -137,7 +138,7 @@ public class RecipeFinder extends Activity {
 					url += "?q=" + encodedQuery;
 				}
 			}
-			Log.d("url", url);
+			Log.d("App", url);
 			dialog = ProgressDialog.show(RecipeFinder.this,
 					getString(R.string.please_wait),
 					getString(R.string.searching_recipes), true);
@@ -165,6 +166,7 @@ public class RecipeFinder extends Activity {
 
 		@Override
 		protected ArrayList<Recipe> doInBackground(String... params) {
+			Log.d("App", "do In Background");
 			JsonParser parser = new JsonParser();
 			JSONObject json = parser.getJSONFromUrl(params[0]);
 			JSONArray contacts = null;
@@ -181,6 +183,7 @@ public class RecipeFinder extends Activity {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			Log.d("App", "Exiting doInBackground");
 			return recipeList;
 		}
 

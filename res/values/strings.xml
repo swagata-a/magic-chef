@@ -24,6 +24,6 @@
     <string name="menu_settings">Settings</string>
     <string name="no_fav">You dont have any favorite recipes.</string>
     <string name="add_fav">Add Fav</string>
-    <string name="title_activity_splash_screen">Splash Screen</string>
+    <string name="title_activity_splash_screen">Magic Chef</string>
 
 </resources>
