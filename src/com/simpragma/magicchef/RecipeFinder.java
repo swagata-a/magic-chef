@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.simpragma.magicchef.adapter.RecipeAdapter;
 import com.simpragma.magicchef.bo.Recipe;
 import com.simpragma.magicchef.json.JsonParser;
+import com.simpragma.magicchef.utils.RecipeUtil;
 
 public class RecipeFinder extends Activity {
 
@@ -60,7 +61,7 @@ public class RecipeFinder extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recipe_finder);
-		if (isNetworkConnected()) {
+		if (RecipeUtil.isNetworkConnected(getApplicationContext())) {
 			Bundle extras = getIntent().getExtras();
 			if (extras != null) {
 				url = "http://www.recipepuppy.com/api/";
@@ -245,12 +246,5 @@ public class RecipeFinder extends Activity {
 		default:
 			return super.onContextItemSelected(item);
 		}
-	}
-
-	private boolean isNetworkConnected() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager
-				.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 }
