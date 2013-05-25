@@ -11,7 +11,7 @@ import android.os.Parcelable;
  * @author swagataacharyya
  * 
  */
-public class Recipe{
+public class Recipe implements Parcelable{
 	public String id;
 
 	public String getId() {
@@ -93,25 +93,25 @@ public class Recipe{
 				+ ingredients + ", thumbnail=" + thumbnail + "]";
 	}
 
-//	@Override
-//	public int describeContents() {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-//
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		dest.writeStringArray(new String[] { this.id, this.title, this.href,
-//				this.ingredients, this.thumbnail });
-//	}
-//
-//	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-//        public Recipe createFromParcel(Parcel in) {
-//            return new Recipe(in); 
-//        }
-//
-//        public Recipe[] newArray(int size) {
-//            return new Recipe[size];
-//		}
-//	};
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeStringArray(new String[] { this.id, this.title, this.href,
+				this.ingredients, this.thumbnail });
+	}
+
+	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in); 
+        }
+
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+		}
+	};
 }

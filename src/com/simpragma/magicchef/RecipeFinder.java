@@ -54,13 +54,14 @@ public class RecipeFinder extends Activity {
 	RecipeAdapter adapter = null;
 	ListView list;
 	ProgressDialog dialog;
-
+	TextView noRecipe;
 	TextView credits;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recipe_finder);
+		noRecipe = (TextView)findViewById(R.id.no_recipe);
 		if (RecipeUtil.isNetworkConnected(getApplicationContext())) {
 			Log.d("App", "Network Connected");
 			Bundle extras = getIntent().getExtras();
@@ -166,7 +167,7 @@ public class RecipeFinder extends Activity {
 
 		@Override
 		protected ArrayList<Recipe> doInBackground(String... params) {
-			Log.d("App", "do In Background");
+			Log.d("App", "do In Background "+params[0]);
 			JsonParser parser = new JsonParser();
 			JSONObject json = parser.getJSONFromUrl(params[0]);
 			JSONArray contacts = null;
@@ -192,6 +193,9 @@ public class RecipeFinder extends Activity {
 			super.onPostExecute(result);
 			list = (ListView) findViewById(R.id.list);
 			credits = (TextView) findViewById(R.id.credits);
+			if(result.size()==0){
+				noRecipe.setVisibility(View.VISIBLE);
+			}
 			adapter = new RecipeAdapter(getApplicationContext(), result);
 			list.setAdapter(adapter);
 			dialog.dismiss();
