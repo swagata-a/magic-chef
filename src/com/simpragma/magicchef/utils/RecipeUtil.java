@@ -19,4 +19,16 @@ public class RecipeUtil {
 				.getActiveNetworkInfo();
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
+	
+	public static String getAppId(){
+		return "YOUR_APP_ID";
+	}
+	
+	public static String getConsumerKey(){
+		return "YOUR_CONSUMER_KEY";
+	}
+	
+	public static String getSecretKey(){
+		return "YOUR_SECRET_KEY";
+	}
 }

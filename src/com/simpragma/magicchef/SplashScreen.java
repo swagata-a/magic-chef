@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.instaops.android.MA;
 import com.simpragma.magicchef.bo.Recipe;
 import com.simpragma.magicchef.db.RecipeDao;
 import com.simpragma.magicchef.utils.RecipeUtil;
@@ -23,6 +24,8 @@ public class SplashScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash_screen);
+		boolean crashReportingEnabled = true;
+		  MA.initialize(RecipeUtil.getAppId(), RecipeUtil.getConsumerKey(),RecipeUtil.getSecretKey(),this,crashReportingEnabled);
 		recipeDao = new RecipeDao(this);
 		recipeDao.open();
 		recipeList = recipeDao.getAllRecipes();
