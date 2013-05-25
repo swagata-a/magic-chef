@@ -12,12 +12,15 @@ import java.io.UnsupportedEncodingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
+
+import com.instaops.android.MANet;
 
 /**
  * A JSON parsing utility. Can be used in any app where we need to
@@ -42,8 +45,8 @@ public class JsonParser {
 		try {
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost(url);
-
-			HttpResponse httpResponse = httpClient.execute(httpPost);
+			HttpClient wrappedHTTPClient = MANet.wrap(httpClient);
+			HttpResponse httpResponse = wrappedHTTPClient.execute(httpPost);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			is = httpEntity.getContent();
 

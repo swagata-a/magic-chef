@@ -19,24 +19,27 @@ public class SplashScreen extends Activity {
 	private RecipeDao recipeDao;
 	ArrayList<Recipe> recipeList;
 	Intent newIntent;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash_screen);
 		boolean crashReportingEnabled = true;
-		  MA.initialize(RecipeUtil.getAppId(), RecipeUtil.getConsumerKey(),RecipeUtil.getSecretKey(),this,crashReportingEnabled);
+		MA.initialize(RecipeUtil.getAppId(), RecipeUtil.getConsumerKey(),
+				RecipeUtil.getSecretKey(), this, crashReportingEnabled);
 		recipeDao = new RecipeDao(this);
 		recipeDao.open();
 		recipeList = recipeDao.getAllRecipes();
-		
+
 		Runnable r = new Runnable() {
 			public void run() {
-				if(recipeList.size()==0){
-				 newIntent = new Intent(SplashScreen.this, RecipeFinder.class);
-				}else{
-				 newIntent = new Intent(SplashScreen.this, FavoriteRecipes.class);	
-				 newIntent.putExtra("data", recipeList);
+				if (recipeList.size() == 0) {
+					newIntent = new Intent(SplashScreen.this,
+							RecipeFinder.class);
+				} else {
+					newIntent = new Intent(SplashScreen.this,
+							FavoriteRecipes.class);
+					newIntent.putExtra("data", recipeList);
 				}
 				startActivity(newIntent);
 				finish();
