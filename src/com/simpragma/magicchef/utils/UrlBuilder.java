@@ -19,7 +19,7 @@ public class UrlBuilder {
 			List<String> searchTerms, String[] allergies){
 		baseUrl="http://www.recipepuppy.com/api/";
 		try{
-		if(!ingredients.isEmpty()){
+		if(ingredients!=null){
 			baseUrl+="?i=";
 			String attached = "";
 			int ingredientCount = 0;
@@ -32,14 +32,18 @@ public class UrlBuilder {
 			}
 			baseUrl+=URLEncoder.encode(attached, "utf-8");
 		}
-		if(!searchTerms.isEmpty()){
+		if(searchTerms!=null){
+			if(ingredients==null){
+				baseUrl+="?q=";
+			}else{
 			baseUrl+="&q=";
+			}
 			String attached = "";
 			int searchCount = 0;
 			for(String searchTerm:searchTerms){
 				attached+=searchTerm.trim();
 				if(searchCount<searchTerms.size()-1){
-					attached+=",";
+					attached+=" ";
 				}
 				searchCount++;
 			}

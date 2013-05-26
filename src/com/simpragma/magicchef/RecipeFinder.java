@@ -50,8 +50,8 @@ public class RecipeFinder extends Activity {
 	ProgressDialog dialog;
 	TextView noRecipe;
 	TextView credits;
-	List<String> ingredientsList = new ArrayList<String>();
-	List<String> searchTermsList = new ArrayList<String>();
+	List<String> ingredientsList = null;
+	List<String> searchTermsList = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,24 +62,31 @@ public class RecipeFinder extends Activity {
 			Log.d("App", "Network Connected");
 			Bundle extras = getIntent().getExtras();
 			if (extras != null) {
+
 				String query = (String) extras.getString("query");
 				String cuisine = (String) extras.getString("cuisine");
 				if (query != null) {
-					String[] queryArray = query.split(",");
+					if (query.trim().length() > 0) {
+						ingredientsList = new ArrayList<String>();
+						String[] queryArray = query.split(",");
 
-					for (String data : queryArray) {
-						String[] dataArray = data.split(" ");
-						for (String str : dataArray) {
-							ingredientsList.add(str);
+						for (String data : queryArray) {
+							String[] dataArray = data.split(" ");
+							for (String str : dataArray) {
+								ingredientsList.add(str);
+							}
 						}
 					}
 				}
 				if (cuisine != null) {
-					String[] cuisineArray = cuisine.split(",");
-					for (String data : cuisineArray) {
-						String[] dataArray = data.split(" ");
-						for (String str : dataArray) {
-							searchTermsList.add(str);
+					if (cuisine.trim().length() > 0) {
+						searchTermsList = new ArrayList<String>();
+						String[] cuisineArray = cuisine.split(",");
+						for (String data : cuisineArray) {
+							String[] dataArray = data.split(" ");
+							for (String str : dataArray) {
+								searchTermsList.add(str);
+							}
 						}
 					}
 				}
