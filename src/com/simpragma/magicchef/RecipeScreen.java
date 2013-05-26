@@ -50,7 +50,7 @@ public class RecipeScreen extends Activity {
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
 				super.onPageStarted(view, url, favicon);
 				progressDialog.setMessage("Loading Page");
-				progressDialog.setCancelable(false);
+				progressDialog.setCancelable(true);
 				progressDialog.setOnKeyListener(new OnKeyListener() {
 					@Override
 					public boolean onKey(DialogInterface dialog, int keyCode,

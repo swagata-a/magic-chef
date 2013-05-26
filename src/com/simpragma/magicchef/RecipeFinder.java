@@ -103,7 +103,7 @@ public class RecipeFinder extends Activity {
 					});
 			builder.setTitle(getString(R.string.internet_needed));
 			builder.setMessage(getString(R.string.no_internet_message));
-			builder.setCancelable(false);
+			builder.setCancelable(true);
 			AlertDialog dlg = builder.create();
 			dlg.show();
 		}
