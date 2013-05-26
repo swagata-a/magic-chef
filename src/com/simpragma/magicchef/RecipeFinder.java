@@ -1,7 +1,5 @@
 package com.simpragma.magicchef;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +14,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,15 +28,15 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.instaops.android.Log;
 import com.simpragma.magicchef.adapter.RecipeAdapter;
 import com.simpragma.magicchef.bo.Recipe;
 import com.simpragma.magicchef.json.JsonParser;
+import com.simpragma.magicchef.utils.RecipeUtil;
+import com.simpragma.magicchef.utils.UrlBuilder;
 
 public class RecipeFinder extends Activity {
 
-	private static String url = "http://www.recipepuppy.com/api/";
-	// ArrayList<HashMap<String, String>> recipeList = new
-	// ArrayList<HashMap<String, String>>();
 	ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
 	public static final String TAG_RESULTS = "results";
 	public static final String TAG_TITLE = "title";
@@ -53,90 +48,52 @@ public class RecipeFinder extends Activity {
 	RecipeAdapter adapter = null;
 	ListView list;
 	ProgressDialog dialog;
-
+	TextView noRecipe;
 	TextView credits;
+	List<String> ingredientsList = null;
+	List<String> searchTermsList = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recipe_finder);
-		if (isNetworkConnected()) {
+		noRecipe = (TextView) findViewById(R.id.no_recipe);
+		if (RecipeUtil.isNetworkConnected(getApplicationContext())) {
+			Log.d("App", "Network Connected");
 			Bundle extras = getIntent().getExtras();
 			if (extras != null) {
-				url = "http://www.recipepuppy.com/api/";
+
 				String query = (String) extras.getString("query");
 				String cuisine = (String) extras.getString("cuisine");
-				String finalQuery = "";
-				String finalCuisine = "";
 				if (query != null) {
-					String[] queryTokens = query.split(",");
-					List<String> spaceTokens = new ArrayList<String>();
-					for (String str : queryTokens) {
-						String[] spcToken = str.split(" ");
-						for (String str1 : spcToken) {
-							spaceTokens.add(str1);
+					if (query.trim().length() > 0) {
+						ingredientsList = new ArrayList<String>();
+						String[] queryArray = query.split(",");
+
+						for (String data : queryArray) {
+							String[] dataArray = data.split(" ");
+							for (String str : dataArray) {
+								ingredientsList.add(str);
+							}
 						}
 					}
-					for (String queryStr : spaceTokens) {
-						finalQuery += queryStr.trim() + ",";
-					}
-					Log.d("query", "To Send " + finalQuery);
 				}
 				if (cuisine != null) {
-					String[] cuisineTokens = cuisine.split(",");
-					List<String> spaceTokens = new ArrayList<String>();
-					for (String str : cuisineTokens) {
-						String[] spcToken = str.split(" ");
-						for (String str1 : spcToken) {
-							spaceTokens.add(str1);
+					if (cuisine.trim().length() > 0) {
+						searchTermsList = new ArrayList<String>();
+						String[] cuisineArray = cuisine.split(",");
+						for (String data : cuisineArray) {
+							String[] dataArray = data.split(" ");
+							for (String str : dataArray) {
+								searchTermsList.add(str);
+							}
 						}
 					}
-					for (String cuisineStr : spaceTokens) {
-						finalCuisine += cuisineStr.trim() + " ";
-					}
-				}
-				// if (exclude != null) {
-				// String[] excludeTokens = exclude.split(",");
-				// List<String> spaceTokens = new ArrayList<String>();
-				// for (String str : excludeTokens) {
-				// String[] spcToken = str.split(" ");
-				// for (String str1 : spcToken) {
-				// spaceTokens.add(str1);
-				// }
-				// }
-				// for (String excludeStr : spaceTokens) {
-				// finalExclude += excludeStr.trim() + " ";
-				// }
-				// }
-				String encodedQuery = finalCuisine;
-				try {
-					if (finalQuery.split(",").length > 0) {
-						url += "?i=" + finalQuery;
-					}
-					// if(finalQuery.split(",").length > 0 &&
-					// finalExclude.trim().length()>0){
-					// url+="-"+URLEncoder.encode(finalExclude.trim(), "utf-8");
-					// }else{
-					// url+="?i=-"+URLEncoder.encode(finalExclude.trim(),
-					// "utf-8");
-					// }
-
-					encodedQuery = URLEncoder.encode(finalCuisine, "utf-8");
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (finalQuery.split(",").length > 0
-						&& finalCuisine.split(",").length > 0) {
-
-					url += "&q=" + encodedQuery;
-				} else if (finalQuery.split(",").length == 0
-						&& finalCuisine.split(",").length > 0) {
-
-					url += "?q=" + encodedQuery;
 				}
 			}
-			Log.d("url", url);
+			String url = UrlBuilder.getFinalUrl(ingredientsList,
+					searchTermsList, null);
+			Log.d("App", url);
 			dialog = ProgressDialog.show(RecipeFinder.this,
 					getString(R.string.please_wait),
 					getString(R.string.searching_recipes), true);
@@ -153,7 +110,7 @@ public class RecipeFinder extends Activity {
 					});
 			builder.setTitle(getString(R.string.internet_needed));
 			builder.setMessage(getString(R.string.no_internet_message));
-			builder.setCancelable(false);
+			builder.setCancelable(true);
 			AlertDialog dlg = builder.create();
 			dlg.show();
 		}
@@ -164,6 +121,7 @@ public class RecipeFinder extends Activity {
 
 		@Override
 		protected ArrayList<Recipe> doInBackground(String... params) {
+			Log.d("App", "do In Background " + params[0]);
 			JsonParser parser = new JsonParser();
 			JSONObject json = parser.getJSONFromUrl(params[0]);
 			JSONArray contacts = null;
@@ -180,6 +138,7 @@ public class RecipeFinder extends Activity {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			Log.d("App", "Exiting doInBackground");
 			return recipeList;
 		}
 
@@ -188,6 +147,9 @@ public class RecipeFinder extends Activity {
 			super.onPostExecute(result);
 			list = (ListView) findViewById(R.id.list);
 			credits = (TextView) findViewById(R.id.credits);
+			if (result.size() == 0) {
+				noRecipe.setVisibility(View.VISIBLE);
+			}
 			adapter = new RecipeAdapter(getApplicationContext(), result);
 			list.setAdapter(adapter);
 			dialog.dismiss();
@@ -245,12 +207,5 @@ public class RecipeFinder extends Activity {
 		default:
 			return super.onContextItemSelected(item);
 		}
-	}
-
-	private boolean isNetworkConnected() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager
-				.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 }

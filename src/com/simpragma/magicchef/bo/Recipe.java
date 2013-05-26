@@ -3,18 +3,22 @@
  */
 package com.simpragma.magicchef.bo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
- * Not used right now. I am keeping this. Have plans to use it in future
  * 
  * @author swagataacharyya
  * 
  */
-public class Recipe {
-	public long id;
-	public long getId() {
+public class Recipe implements Parcelable{
+	public String id;
+
+	public String getId() {
 		return id;
 	}
-	public void setId(long id) {
+
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -26,12 +30,31 @@ public class Recipe {
 	public Recipe() {
 		// TODO Auto-generated constructor stub
 	}
-	public Recipe(String title,String href,String ingredients,String thumbnail) {
+
+	public Recipe(String title, String href, String ingredients,
+			String thumbnail) {
 		this.title = title;
 		this.thumbnail = thumbnail;
-		this.ingredients=ingredients;
+		this.ingredients = ingredients;
 		this.href = href;
 	}
+
+	/**
+	 * Parcelable requirements
+	 * 
+	 * @param in
+	 */
+	public Recipe(Parcel in) {
+		String[] data = new String[5];
+
+		in.readStringArray(data);
+		this.id = data[0];
+		this.title = data[1];
+		this.href = data[2];
+		this.ingredients = data[3];
+		this.thumbnail = data[4];
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -70,4 +93,25 @@ public class Recipe {
 				+ ingredients + ", thumbnail=" + thumbnail + "]";
 	}
 
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeStringArray(new String[] { this.id, this.title, this.href,
+				this.ingredients, this.thumbnail });
+	}
+
+	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in); 
+        }
+
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+		}
+	};
 }

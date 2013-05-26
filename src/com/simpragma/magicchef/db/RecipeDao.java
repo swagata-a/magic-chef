@@ -4,7 +4,6 @@
 package com.simpragma.magicchef.db;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -56,14 +55,15 @@ public class RecipeDao {
 	}
 
 	public void deleteRecipe(Recipe recipe) {
-		long id = recipe.getId();
+		String id = recipe.getId();
 		System.out.println("Comment deleted with id: " + id);
 		database.delete(DbHelper.TABLE_RECIPES,
 				DbHelper.COLUMN_ID + " = " + id, null);
 	}
 
 	public void deleteRecipe(String url) {
-		database.delete(DbHelper.TABLE_RECIPES, DbHelper.COLUMN_HREF + " =?", new String[] { url.trim() });
+		database.delete(DbHelper.TABLE_RECIPES, DbHelper.COLUMN_HREF + " =?",
+				new String[] { url.trim() });
 	}
 
 	public ArrayList<Recipe> getAllRecipes() {
@@ -80,7 +80,7 @@ public class RecipeDao {
 				// Make sure to close the cursor
 				cursor.close();
 			}
-		} 
+		}
 		return recipes;
 	}
 
@@ -100,7 +100,7 @@ public class RecipeDao {
 
 	private Recipe getRecipe(Cursor cursor) {
 		Recipe recipe = new Recipe();
-		recipe.setId(cursor.getLong(0));
+		recipe.setId(cursor.getLong(0) + "");
 		recipe.setHref(cursor.getString(1));
 		recipe.setIngredients(cursor.getString(2));
 		recipe.setThumbnail(cursor.getString(3));

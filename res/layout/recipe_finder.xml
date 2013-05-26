@@ -22,4 +22,15 @@
         android:dividerHeight="1dp"
         android:listSelector="@drawable/list_selector" />
 
+    <TextView 
+       android:id="@+id/no_recipe"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"               
+       android:text="@string/no_recipe"
+       android:textSize="16sp"
+       android:clickable="true"
+       android:layout_marginBottom="10dp"
+       android:visibility="gone"
+       />
+    
 </LinearLayout>
